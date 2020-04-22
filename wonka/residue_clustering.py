@@ -3,8 +3,8 @@ from cluster_functions import cluster_dp
 import json
 import time
 
-DATA_DIRECTORY = os.path.abspath('data')
-RESULTS_DIRECTORY = os.path.abspath('results')
+#DATA_DIRECTORY = os.path.abspath('data')
+#RESULTS_DIRECTORY = os.path.abspath('results')
 
 def get_res(pdb):
     """
@@ -38,26 +38,25 @@ def get_res(pdb):
 
 
 
+def cluster_residues(DATA_DIRECTORY, RESULTS_DIRECTORY, target):
+        all_clusters = {}
+        if target not in os.listdir(RESULTS_DIRECTORY):
+            os.makedirs(os.path.join(RESULTS_DIRECTORY, target))
+        coms = {}
+        idents =[]
+        lam = 2.5
+        for filename in os.listdir(os.path.join(DATA_DIRECTORY, target)):
+            pdb = open(os.path.join(DATA_DIRECTORY, target, filename), 'r').readlines()
+            coms[filename] = get_res(pdb)
+            idents.append(filename)
+        for i in coms[idents[0]]:
+            print('clustering', i)
+            vectors = []
+            for j in coms:
+                vectors.append(coms[j][i])
+            clusters = cluster_dp(vectors, lam, idents)
+            all_clusters[i] = clusters
+        json.dump(all_clusters, open(os.path.join(RESULTS_DIRECTORY, target, 'residue_clusters.json'), 'w'))
+        print('clustered and saved')
 
-for dir in os.listdir(DATA_DIRECTORY):
-    all_clusters = {}
-    if dir not in os.listdir(RESULTS_DIRECTORY):
-        os.makedirs(os.path.join(RESULTS_DIRECTORY, dir))
-    coms = {}
-    idents = []
-    lam = 2.5
-    for filename in os.listdir(os.path.join(DATA_DIRECTORY, dir)):
-        pdb = open(os.path.join(DATA_DIRECTORY, dir, filename), 'r').readlines()
-        coms[filename] = get_res(pdb)
-        idents.append(filename)
-    for i in coms[idents[0]]:
-        print('clustering', i)
-        vectors = []
-        for j in coms:
-            vectors.append(coms[j][i])
-        clusters = cluster_dp(vectors, lam, idents)
-        all_clusters[i] = clusters
-    
-    json.dump(all_clusters, open(os.path.join(RESULTS_DIRECTORY, dir, 'residue_clusters.json'), 'w'))
-    print('clustered and saved')
-
+#cluster_residues(DATA_DIRECTORY, RESULTS_DIRECTORY)

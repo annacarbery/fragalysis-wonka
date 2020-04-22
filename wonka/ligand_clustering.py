@@ -59,24 +59,18 @@ def run_lig_cluster(mols, identifiers):
     return clusters
 
 
-def cluster(DATA_DIRECTORY, RESULTS_DIRECTORY):
-    for dir in os.listdir(DATA_DIRECTORY):
-        if dir not in os.listdir(RESULTS_DIRECTORY):
-            os.makedirs(os.path.join(RESULTS_DIRECTORY, dir))
-        print('dir: ', dir)
+def cluster_ligands(DATA_DIRECTORY, RESULTS_DIRECTORY, target):
         mols = []
         identifiers = []
-        for file in os.listdir(os.path.join(DATA_DIRECTORY, dir)):
-            print('file: ', file)
-            mols.append(_parse_pdb(os.path.join(DATA_DIRECTORY, dir, file)))
-            identifiers.append(str(file))
+        for filename in os.listdir(os.path.join(DATA_DIRECTORY, target)):
+            mols.append(_parse_pdb(os.path.join(DATA_DIRECTORY, target, filename)))
+            identifiers.append(str(filename))
         print('out of loop')
         output = run_lig_cluster(mols, identifiers)
-        print('wonka: ', output)
-        json.dump(output, open(os.path.join(RESULTS_DIRECTORY, dir, 'ligand_cluster.json'), 'w'))
+        json.dump(output, open(os.path.join(RESULTS_DIRECTORY, target, 'ligand_cluster.json'), 'w'))
 
 
-DATA_DIRECTORY = os.path.abspath('data')
-RESULTS_DIRECTORY = os.path.abspath('results')
+#DATA_DIRECTORY = os.path.abspath('data')
+#RESULTS_DIRECTORY = os.path.abspath('results')
 
-cluster(DATA_DIRECTORY, RESULTS_DIRECTORY)
+#cluster_ligands(DATA_DIRECTORY, RESULTS_DIRECTORY)
